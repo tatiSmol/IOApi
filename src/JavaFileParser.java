@@ -6,7 +6,10 @@ public class JavaFileParser {
     public static void main(String[] args) {
         String fromFile = "data/JavaCodeFilePublic.java";
 
+        // Все результаты сохраняются в файлы.
+        // Заменить все слова public на слово private в объявлении атрибутов и методов класса
         changeModifierPublicToPrivate(fromFile, "data/JavaCodeFilePrivate.java");
+        // Записать символы каждой строки в обратном порядке
         reverseText(fromFile, "data/reversedJavaCodeFile.java");
     }
 
