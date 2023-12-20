@@ -1,40 +1,50 @@
 import java.io.*;
+import java.util.ArrayList;
+import java.util.List;
 
 public class JavaFileParser {
     public static void main(String[] args) {
         String fromFile = "data/JavaCodeFilePublic.java";
-        String toFile = "data/JavaCodeFilePrivate.java";
-        changeModifierPublicToPrivate(fromFile, toFile);
-        reverseText(fromFile, "data/reversedJavaCode.java");
+
+        changeModifierPublicToPrivate(fromFile, "data/JavaCodeFilePrivate.java");
+        reverseText(fromFile, "data/reversedJavaCodeFile.java");
     }
 
-    public static void changeModifierPublicToPrivate(String from, String to) {
-        try (BufferedReader reader = new BufferedReader(new FileReader(from));
-             BufferedWriter writer = new BufferedWriter(new FileWriter(to))) {
+    private static List<String> getText(String fileName) {
+        try (BufferedReader reader = new BufferedReader(new FileReader(fileName))) {
+            return reader.lines().toList();
+        } catch (IOException ex) {
+            throw new RuntimeException(ex);
+        }
+    }
 
-            for (String line : reader.lines().toList()) {
-                if (line.stripLeading().startsWith("public")) {
-                    line = line.replaceAll("\\spublic", "private");
-                }
-
+    private static void writeText(List<String> lines, String fileName) {
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter(fileName))) {
+            for (String line : lines) {
                 writer.write(line);
                 writer.newLine();
             }
-        } catch (IOException e) {
-            throw new RuntimeException(e);
+        } catch (IOException ex) {
+            throw new RuntimeException(ex);
         }
     }
 
-    public static void reverseText(String from, String to) {
-        try (BufferedReader reader = new BufferedReader(new FileReader(from));
-             BufferedWriter writer = new BufferedWriter(new FileWriter(to))) {
-
-            for (String line : reader.lines().toList()) {
-                writer.write(new StringBuilder(line).reverse().toString());
-                writer.newLine();
+    public static void changeModifierPublicToPrivate(String from, String to) {
+        List<String> lines = new ArrayList<>();
+        for (String line : getText(from)) {
+            if (line.stripLeading().startsWith("public")) {
+                line = line.replaceAll("\\spublic", "private");
             }
-        } catch (IOException e) {
-            throw new RuntimeException(e);
+            lines.add(line);
         }
+        writeText(lines, to);
+    }
+
+    public static void reverseText(String from, String to) {
+        List<String> lines = new ArrayList<>();
+        for (String line : getText(from)) {
+            lines.add(new StringBuilder(line).reverse().toString());
+        }
+        writeText(lines, to);
     }
 }
